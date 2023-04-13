@@ -15,19 +15,23 @@ class Node {
 }
 
 class BinarySearchTree {
+  constructor() {
+    this.head = null;
+  }
 
   root() {
-    return this.first_root
+    return this.head;
   }
 
   add(data) {
     const NEW_NODE = new Node(data)
-    if(!this.first_root) {
-      this.first_root = NEW_NODE;
+
+    if(!this.head) {
+      this.head = NEW_NODE;
       return;
     }
 
-    let currentNode = this.first_root;
+    let currentNode = this.head;
 
     while(currentNode) {
       if(NEW_NODE.data < currentNode.data) {
@@ -47,100 +51,78 @@ class BinarySearchTree {
       }
   }
 
-  has() {
-    if (this.find(data)) {
-      return true;
-    }
+  has(data) {
+    if (this.find(data)) return true;
+
     return false;
   }
 
   find(data) {
-    if(!this.first_root) {
-      return null
+    if (!this.head) return null;
+
+    let currentNode = this.head;
+
+    while (currentNode) {
+      if (data < currentNode.data) currentNode = currentNode.left;
+      else if (data > currentNode.data) currentNode = currentNode.right;
+      else return currentNode;
     }
 
-    let currentNode = this.first_root;
-    let parentNode = null;
-    
-    while(currentNode) {
-      if (data === currentNode.data) {
-        this.parentNode = parentNode;
-        return currentNode
-      }
-      else if (data > currentNode.data) {
-        parentNode = currentNode;
-        currentNode = currentNode.right;
-      }
-      else {
-        parentNode = currentNode;
-        currentNode = currentNode.left;
-      }     
-     }
-    
-    return currentNode
+    return null
   }
 
   remove(data) {
-    this.first_root = removeNode(this.first_root, data);
+    function _remove(node, value) {
 
-    function removeNode(node, data) {
-      if (!node) {
-        return null;
+      if (!node) return null;
+
+      if (value < node.data) {
+        node.left = _remove(node.left, value);
+        return node;
       }
-      if (data < node.data) {
-        node.left = removeNode(node.left, data);
-        return node;
-      } else if (data > node.data) {
-        node.right = removeNode(node.right, data);
-        return node;
-      } else {
-        if (!node.left && !node.right) {
-          return null;
-        }
-        if (!node.left) {
-          node = node.right;
-          return node;
-        }
-        if (!node.right) {
-          node = node.left;
-          return node;
-        }
 
-        let maxFromLeft = node.left;
-        while (maxFromLeft.right) {
-          maxFromLeft = maxFromLeft.right;
+      if (value > node.data) {
+        node.right = _remove(node.right, value);
+        return node;
+      }
+
+      if (value === node.data) {
+        if (!node.left && !node.right) return null;
+        if (!node.left || !node.right) return node.right || node.left;
+        let maxLeft = node.left;
+        while (maxLeft.right) {
+          maxLeft = maxLeft.right;
         }
-        node.data = maxFromLeft.data;
-        node.left = removeNode(node.left, maxFromLeft.data);
+        node.data = maxLeft.data;
+        node.left = _remove(node.left, maxLeft.data);
         return node;
       }
     }
+    this.head = _remove(this.head, data);
   }
 
   min() {
-    if(!this.first_root) {
-      return null
+    if (!this.head) return null;
+
+    let currentNode = this.head;
+
+    while (currentNode.left) {
+      currentNode = currentNode.left;
     }
 
-    let currentNode = this.first_root;
-    
-    while(currentNode.left) {
-      currentNode = currentNode.left
-  }
-    return currentNode.data
+    return currentNode.data;
   }
 
   max() {
-    if(!this.first_root) {
-      return null
+    if (!this.head) return null;
+
+    let currentNode = this.head;
+
+    while (currentNode.right) {
+      currentNode = currentNode.right;
     }
 
-    let currentNode = this.first_root;
-    
-    while(currentNode.right) {
-      currentNode = currentNode.right
-  }
-    return currentNode.data
+    return currentNode.data;
   }
 }
 
